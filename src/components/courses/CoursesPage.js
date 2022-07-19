@@ -1,4 +1,7 @@
 import React from "react";
+import { connect } from 'react-redux';
+import * as courseActions from '../../redux/actions/courseAction'
+import PropTypes from 'prop-types'
 
 class CoursesPage extends React.Component {
     state = {
@@ -13,7 +16,11 @@ class CoursesPage extends React.Component {
     }
     handleSubmit = event => {
         event.preventDefault();
-        alert(this.state.course.title);
+        // called create course action from courseActions to replace the alert
+        this.props.dispatch(
+          courseActions.createCourse(this.state.course)
+        );
+       // alert(this.state.course.title);
     }
   render() {
     return (
@@ -27,12 +34,48 @@ class CoursesPage extends React.Component {
         />
 
         <input type="submit" value="Save" />
-        {/* {this.props.courses.map((course) => (
+        {this.props.courses.map((course) => (
         <div key={course.title}>{course.title}</div>
-      ))} */}
+      ))}
       </form>
     );
   }
 }
 
-export default CoursesPage;
+CoursesPage.propTypes = {
+    dispatch: PropTypes.func.isRequired
+};
+
+function mapStateToProps(state, ownProps) {
+  return {
+    // request only the data that your project needs to prevent re-render
+    courses: state.courses
+  }
+}
+
+// function mapStateToProps(state) {
+//   return {
+//     courses:
+//       state.authors.length === 0
+//         ? []
+//         : state.courses.map((course) => {
+//             return {
+//               ...course,
+//               authorName: state.authors.find((a) => a.id === course.authorId)
+//                 .name,
+//             };
+//           }),
+//     authors: state.authors,
+//   };
+// }
+
+// function mapDispatchToProps(dispatch) {
+//   return {
+//     actions: {
+//       loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
+//       loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
+//     },
+//   };
+// }
+
+export default connect(mapStateToProps)(CoursesPage);
